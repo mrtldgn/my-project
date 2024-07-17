@@ -46,15 +46,15 @@ public class CarDAO {
         return cars;
     }
 
-    public void updateCar(int carId, String userId, String carBrand, String carModel) throws SQLException {
-        String sql = "UPDATE cars SET brand = ?, model = ? WHERE id = ?";
+    public void updateCar(Car car) throws SQLException {
+        String sql = "UPDATE cars SET user_id = ?, brand = ?, model = ? WHERE id = ?";
 
         Connection connection = DatabaseConnection.getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1, userId);
-        statement.setString(2, carBrand);
-        statement.setString(3, carModel);
-        statement.setInt(4, carId);
+        statement.setInt(1, car.userId);
+        statement.setString(2, car.carBrand);
+        statement.setString(3, car.carModel);
+        statement.setInt(4, car.id);
 
         statement.executeUpdate();
         System.out.println("Araç güncellendi!");
