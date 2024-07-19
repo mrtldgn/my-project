@@ -87,6 +87,27 @@ public class CarDAO {
              System.out.println(car);
         }
     }
+    public ArrayList<Car> listCarsOfUser(int userId){
+        String sql = "SELECT * FROM cars WHERE user_id = ?";
+        ArrayList<Car> cars = new ArrayList<Car>();
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int carId = resultSet.getInt("id");
+                String carBrand = resultSet.getString("brand");
+                String carModel = resultSet.getString("model");
+                cars.add(new Car(carId, userId, carBrand, carModel));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cars;
+    }
 
 }
 

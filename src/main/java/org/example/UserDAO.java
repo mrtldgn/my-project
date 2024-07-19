@@ -5,21 +5,23 @@ import java.util.ArrayList;
 
 public class UserDAO {
     private Connection connection;
-    public UserDAO(Connection connection){
+
+    public UserDAO(Connection connection) {
         this.connection = connection;
     }
 
     public void addUser(User user) {
         String sql = "INSERT INTO users (first_name, last_name, email) VALUES (?, ?, ?)";
-
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.firstName);
             statement.setString(2, user.lastName);
             statement.setString(3, user.email);
-
             statement.executeUpdate();
-            System.out.println("Kullanıcı eklendi!");
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                user.id = rs.getInt(1);
+            }
+            System.out.println("Kullanıcı eklendi: " + user.id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,18 +64,15 @@ public class UserDAO {
         String sql = "DELETE FROM users WHERE id = ?";
 
         PreparedStatement statement = connection.prepareStatement(sql);
-
         statement.setInt(1, id);
-
         statement.executeUpdate();
         System.out.println("Kullanıcı silindi!");
     }
-    public void printUsers(){
+
+    public void printUsers() {
         ArrayList<User> users = listUsers();
-        for(User user : users){
+        for (User user : users) {
             System.out.println(user);
         }
     }
-
-
 }
